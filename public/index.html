@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DelGrosso — Prenotazioni</title>
+  <link rel="stylesheet" href="./style.css?v=1" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-text">
+        <div class="brand-title">DelGrosso Viaggi</div>
+        <div class="brand-sub">&amp; Limousine Bus</div>
+        <div class="brand-mini">Prenotazioni Pullman</div>
+      </div>
+    </div>
+
+    <a class="icon-btn" href="./admin.html" title="Admin">⚙️</a>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Prenotazioni</h1>
+
+    <div class="layout-3">
+
+      <!-- LOCANDINE -->
+      <section class="card">
+        <h2 class="card-title">Locandine</h2>
+        <div id="locandineGrid" class="locandine-grid"></div>
+        <div id="locandineMsg" class="msg"></div>
+      </section>
+
+      <!-- VIAGGIO + PRENOTAZIONE -->
+      <section class="card">
+        <h2 class="card-title">Viaggio</h2>
+
+        <label class="lbl" for="tripSelect">Seleziona viaggio</label>
+        <select id="tripSelect" class="in">
+          <option value="">Seleziona...</option>
+        </select>
+
+        <label class="lbl" for="tripDate">Data viaggio</label>
+        <input id="tripDate" class="in" type="text" readonly placeholder="—" />
+
+        <label class="lbl" for="departure">Partenza</label>
+        <input id="departure" class="in" type="text" readonly placeholder="—" />
+
+        <label class="lbl" for="busType">Bus</label>
+        <input id="busType" class="in" type="text" readonly placeholder="—" />
+
+        <hr class="sep" />
+
+        <h2 class="card-title">Prenotazione</h2>
+
+        <label class="lbl" for="fullName">Nome e Cognome</label>
+        <input id="fullName" class="in" type="text" placeholder="Es. Mario Rossi" />
+
+        <label class="lbl" for="phone">Telefono</label>
+        <input id="phone" class="in" type="tel" placeholder="Es. +39..." />
+
+        <div class="selected-box" style="margin-top:12px">
+          <div class="selected-title">Posti selezionati</div>
+          <div id="selectedSeats">Nessuno</div>
+        </div>
+
+        <button id="bookBtn" class="btn" type="button">Prenota</button>
+        <div id="msgBox" class="msg"></div>
+      </section>
+
+      <!-- PIANTINA -->
+      <section class="card">
+        <h2 class="card-title">Piantina posti</h2>
+        <div id="seatmap" class="seatmap"></div>
+      </section>
+
+    </div>
+
+    <footer style="text-align:center; padding:18px 10px; color:#6b7280; font-size:12px;">
+      © DELGROSSO VIAGGI &amp; LIMOUSINE BUS 2026
+    </footer>
+  </main>
+
+  <!-- Modal locandina -->
+  <div id="posterModal" class="modal hidden" aria-hidden="true">
+    <div class="poster-full">
+      <button id="posterClose" class="icon-btn close" type="button" title="Chiudi">✕</button>
+      <img id="posterImg" src="" alt="Locandina" />
+      <div class="poster-meta">
+        <div>
+          <div id="posterTitle" class="poster-title">Locandina</div>
+          <div id="posterInfo" class="poster-info"></div>
+        </div>
+        <button id="posterDownload" class="btn ghost" type="button" style="width:auto">Apri</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — DelGrosso</title>
+  <link rel="stylesheet" href="./style.css?v=1" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-text">
+        <div class="brand-title">DelGrosso Viaggi</div>
+        <div class="brand-sub">&amp; Limousine Bus</div>
+        <div class="brand-mini">Admin</div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a class="icon-btn" href="./index.html" title="Home">🏠</a>
+      <button id="logoutBtn" class="icon-btn" type="button" title="Logout" style="display:none;">🚪</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Admin</h1>
+
+    <!-- LOGIN -->
+    <section id="authBox" class="card">
+      <h2 class="card-title">Accesso</h2>
+
+      <label class="lbl" for="adminPass">Password</label>
+      <input id="adminPass" class="in" type="password" placeholder="Inserisci password" autocomplete="current-password" />
+
+      <button id="loginBtn" class="btn" type="button">Entra</button>
+      <div id="adminMsg" class="msg"></div>
+    </section>
+
+    <!-- PANEL -->
+    <div id="panel" class="layout-3" style="display:none">
+
+      <section class="card">
+        <h2 class="card-title">Viaggi</h2>
+
+        <input id="tripId" type="hidden" />
+
+        <label class="lbl">Nome viaggio</label>
+        <input id="tripName" class="in" placeholder="Es. CARNEVALE DI FANO" />
+
+        <label class="lbl">Data</label>
+        <input id="tripDate" class="in" type="date" />
+
+        <label class="lbl">Partenze</label>
+        <input id="tripDeparture" class="in" placeholder="SAN NICANDRO, SAN SEVERO..." />
+
+        <label class="lbl">Bus</label>
+        <select id="tripBus" class="in">
+          <option value="GT53">GT53</option>
+          <option value="GT63">GT63</option>
+        </select>
+
+        <label class="lbl">Attivo</label>
+        <select id="tripActive" class="in">
+          <option value="true">TRUE</option>
+          <option value="false">FALSE</option>
+        </select>
+
+        <button id="saveTripBtn" class="btn" type="button">Salva viaggio</button>
+        <button id="resetTripBtn" class="btn ghost" type="button">Nuovo</button>
+        <div id="tripMsg" class="msg"></div>
+
+        <hr class="sep" />
+        <div id="tripsList"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Locandine</h2>
+
+        <label class="lbl">Viaggio</label>
+        <select id="posterTrip" class="in"></select>
+
+        <label class="lbl">Titolo</label>
+        <input id="posterTitle" class="in" placeholder="Titolo locandina" />
+
+        <label class="lbl">Immagine</label>
+        <input id="posterFile" class="in" type="file" accept="image/*" />
+
+        <button id="uploadPosterBtn" class="btn" type="button">Carica locandina</button>
+        <div id="posterMsg" class="msg"></div>
+
+        <hr class="sep" />
+        <div id="postersList"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Prenotazioni</h2>
+
+        <label class="lbl">Viaggio</label>
+        <select id="bookingsTrip" class="in"></select>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+          <button id="exportXlsxBtn" class="btn" type="button" style="width:auto;">Export Excel</button>
+          <button id="copyPhonesBtn" class="btn ghost" type="button" style="width:auto;">Copia telefoni</button>
+          <button id="copyPeopleBtn" class="btn ghost" type="button" style="width:auto;">Copia partecipanti</button>
+        </div>
+
+        <div id="bookingsMsg" class="msg"></div>
+
+        <hr class="sep" />
+        <div id="bookingsList"></div>
+
+        <hr class="sep" />
+        <div id="participantsList"></div>
+      </section>
+
+    </div>
+
+    <footer style="text-align:center; padding:18px 10px; color:#6b7280; font-size:12px;">
+      © DELGROSSO VIAGGI &amp; LIMOUSINE BUS 2026
+    </footer>
+  </main>
+
+  <script type="module" src="./admin.js?v=2"></script>
+</body>
+</html>

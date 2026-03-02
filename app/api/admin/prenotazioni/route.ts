@@ -2,70 +2,36 @@ import { NextRequest, NextResponse } from "next/server";
 import { assertAdmin } from "../../_utils/admin";
 import { getServerSupabase } from "@/lib/supabaseServer";
 
-/**
- * GET → lista prenotazioni (solo admin)
- */
 export async function GET(req: NextRequest) {
-  try {
-    await assertAdmin(req);
+  const a = assertAdmin(req);
+  if (!a.ok) return NextResponse.json({ error: a.error }, { status: 401 });
 
-    const supabase = getServerSupabase();
+  const supabase = getServerSupabase();
+  if (!supabase) return NextResponse.json({ error: "Supabase non configurato." }, { status: 500 });
 
-    const { data, error } = await supabase
-      .from("prenotazioni")
-      .select("*")
-      .order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("prenotazioni")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
-    }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    return NextResponse.json(data);
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message || "Unauthorized" },
-      { status: 401 }
-    );
-  }
+  return NextResponse.json({ items: data ?? [] });
 }
 
-/**
- * DELETE → elimina prenotazione (solo admin)
- */
 export async function DELETE(req: NextRequest) {
-  try {
-    await assertAdmin(req);
+  const a = assertAdmin(req);
+  if (!a.ok) return NextResponse.json({ error: a.error }, { status: 401 });
 
-    const supabase = getServerSupabase();
-    const { id } = await req.json();
+  const supabase = getServerSupabase();
+  if (!supabase) return NextResponse.json({ error: "Supabase non configurato." }, { status: 500 });
 
-    if (!id) {
-      return NextResponse.json(
-        { error: "Missing id" },
-        { status: 400 }
-      );
-    }
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "Parametro 'id' mancante." }, { status: 400 });
 
-    const { error } = await supabase
-      .from("prenotazioni")
-      .delete()
-      .eq("id", id);
+  const { error } = await supabase.from("prenotazioni").delete().eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message || "Unauthorized" },
-      { status: 401 }
-    );
-  }
+  return NextResponse.json({ ok: true });
 }

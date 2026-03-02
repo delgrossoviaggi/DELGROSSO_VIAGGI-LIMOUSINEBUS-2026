@@ -1,36 +1,34 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { assertAdmin } from "../_utils/admin";
 import { getServerSupabase } from "@/lib/supabaseServer";
 
-export async function POST(req: Request) {
+export async function GET(req: NextRequest) {
+  const a = assertAdmin(req);
+  if (!a.ok) return NextResponse.json({ error: a.error }, { status: 401 });
+
   const supabase = getServerSupabase();
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "Supabase non configurato. Imposta NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY su Vercel." },
-      { status: 500 }
-    );
-  }
 
-  const body = await req.json().catch(() => null);
-  if (!body?.nome || !body?.telefono || !body?.servizio) {
-    return NextResponse.json({ error: "Campi obbligatori mancanti." }, { status: 400 });
-  }
+  const { data, error } = await supabase
+    .from("prenotazioni")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  const payload: any = {
-    nome: String(body.nome),
-    telefono: String(body.telefono),
-    servizio: String(body.servizio),
-    data: body.data ? String(body.data) : null,
-    persone: body.persone ? String(body.persone) : null,
-    partenza: body.partenza ? String(body.partenza) : null,
-    destinazione: body.destinazione ? String(body.destinazione) : null,
-    note: body.note ? String(body.note) : null,
-    evento_id: body.evento_id ? String(body.evento_id) : null,
-    evento_bus_id: body.evento_bus_id ? String(body.evento_bus_id) : null,
-    bus_tipo: body.bus_tipo ? String(body.bus_tipo) : null,
-    posti: body.posti ? String(body.posti) : null,
-  };
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const { error } = await supabase.from("prenotazioni").insert(payload);
+  return NextResponse.json({ items: data ?? [] });
+}
+
+export async function DELETE(req: NextRequest) {
+  const a = assertAdmin(req);
+  if (!a.ok) return NextResponse.json({ error: a.error }, { status: 401 });
+
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "Parametro 'id' mancante." }, { status: 400 });
+
+  const supabase = getServerSupabase();
+  const { error } = await supabase.from("prenotazioni").delete().eq("id", id);
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });

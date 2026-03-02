@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,25 +10,25 @@ export default function FotoPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let ok = true;
+    let alive = true;
 
     (async () => {
       try {
         const res = await fetch("/api/foto", { cache: "no-store" });
         const json = await res.json();
-        if (!ok) return;
+        if (!alive) return;
         setItems(Array.isArray(json?.items) ? json.items : []);
       } catch {
-        if (!ok) return;
+        if (!alive) return;
         setItems([]);
       } finally {
-        if (!ok) return;
+        if (!alive) return;
         setLoading(false);
       }
     })();
 
     return () => {
-      ok = false;
+      alive = false;
     };
   }, []);
 
@@ -60,3 +61,6 @@ export default function FotoPage() {
     </div>
   );
 }
+
+
+

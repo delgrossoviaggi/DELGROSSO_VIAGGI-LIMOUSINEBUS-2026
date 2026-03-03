@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -35,14 +34,13 @@ export default function FotoPage() {
   return (
     <div className="max-w-6xl">
       <h1 className="text-3xl font-extrabold text-white">Foto</h1>
-      <p className="mt-2 text-white/70">Galleria foto caricata dal pannello admin.</p>
 
       {loading ? (
-        <div className="mt-8 text-white/70">Caricamento…</div>
+        <div className="mt-6 text-white/70">Caricamento…</div>
       ) : items.length === 0 ? (
-        <div className="mt-8 text-white/70">Nessuna foto disponibile.</div>
+        <div className="mt-6 text-white/70">Nessuna foto disponibile.</div>
       ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {items.map((f) => (
             <a
               key={f.name}
@@ -61,6 +59,3 @@ export default function FotoPage() {
     </div>
   );
 }
-
-
-

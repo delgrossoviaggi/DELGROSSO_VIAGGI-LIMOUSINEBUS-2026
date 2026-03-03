@@ -3,7 +3,6 @@ import { assertAdmin } from "../_utils/admin";
 import { getServerSupabase } from "../../../../lib/supabaseServer";
 
 export const dynamic = "force-dynamic";
-
 const BUCKET = process.env.SUPABASE_EVENTI_BUCKET || "eventi";
 
 export async function GET(req: NextRequest) {
@@ -11,8 +10,6 @@ export async function GET(req: NextRequest) {
   if (!a.ok) return NextResponse.json({ error: a.error }, { status: 401 });
 
   const supabase = getServerSupabase();
-  if (!supabase) return NextResponse.json({ error: "Supabase non configurato." }, { status: 500 });
-
   const { data, error } = await supabase.storage.from(BUCKET).list("", {
     limit: 200,
     offset: 0,
@@ -20,8 +17,7 @@ export async function GET(req: NextRequest) {
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({ items: data ?? [], bucket: BUCKET });
+  return NextResponse.json({ items: data ?? [] });
 }
 
 export async function DELETE(req: NextRequest) {
@@ -33,8 +29,6 @@ export async function DELETE(req: NextRequest) {
   if (!name) return NextResponse.json({ error: "Parametro 'name' mancante." }, { status: 400 });
 
   const supabase = getServerSupabase();
-  if (!supabase) return NextResponse.json({ error: "Supabase non configurato." }, { status: 500 });
-
   const { error } = await supabase.storage.from(BUCKET).remove([name]);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

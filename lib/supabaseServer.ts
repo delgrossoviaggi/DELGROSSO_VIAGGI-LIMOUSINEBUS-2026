@@ -5,8 +5,7 @@ export function getServerSupabase() {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceKey) {
-    // su Vercel devono esserci nelle Environment Variables
-    throw new Error("Missing Supabase env vars (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY).");
+    throw new Error("Supabase environment variables mancanti.");
   }
 
   return createClient(url, serviceKey, {

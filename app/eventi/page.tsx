@@ -1,26 +1,52 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = { title: "Eventi & Foto — Del Grosso Viaggi & Limousine Bus" };
+import { useEffect, useState } from "react";
+
+type Item = { name: string; url: string };
 
 export default function EventiPage() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const r = await fetch("/api/eventi", { cache: "no-store" });
+        const j = await r.json();
+        if (!alive) return;
+        setItems(Array.isArray(j?.items) ? j.items : []);
+      } catch {
+        if (!alive) return;
+        setItems([]);
+      } finally {
+        if (!alive) return;
+        setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
-    <div>
-      <h1 className="text-3xl font-extrabold">Eventi &amp; Foto</h1>
-      <p className="mt-3 text-neutral-300">
-        Scopri alcuni momenti dei nostri eventi con Limousine Bus e Autobus Gran Turismo.
-      </p>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link className="btn btn-primary" href="/prenotazioni">✅ Prenota un evento</Link>
-        <Link className="btn btn-ghost" href="/">← Home</Link>
-      </div>
-
-      <div className="mt-8 card p-6">
-        <div className="font-semibold">Eventi &amp; foto · in aggiornamento</div>
-        <p className="mt-2 text-neutral-300">
-          Qui inseriremo la gallery e le locandine. Quando vuoi, mi mandi foto/locandine e le carico.
-        </p>
-      </div>
-    </div>
+    <main style={{ padding: 24 }}>
+      <h1>Eventi</h1>
+      {loading ? (
+        <p>Caricamento…</p>
+      ) : items.length === 0 ? (
+        <p>Nessun evento disponibile.</p>
+      ) : (
+        <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+          {items.map((x) => (
+            <a key={x.name} href={x.url} target="_blank" rel="noreferrer" style={{ border: "1px solid #ddd", borderRadius: 12, overflow: "hidden" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={x.url} alt={x.name} style={{ width: "100%", height: 300, objectFit: "cover" }} />
+              <div style={{ padding: 10, fontSize: 13 }}>{x.name}</div>
+            </a>
+          ))}
+        </div>
+      )}
+    </main>
   );
 }

@@ -2,21 +2,20 @@
 
 import { useEffect, useState } from "react";
 
-type Foto = { name: string; url: string; created_at?: string };
+type Item = { name: string; url: string };
 
 export default function FotoPage() {
-  const [items, setItems] = useState<Foto[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
-
     (async () => {
       try {
-        const res = await fetch("/api/foto", { cache: "no-store" });
-        const json = await res.json();
+        const r = await fetch("/api/foto", { cache: "no-store" });
+        const j = await r.json();
         if (!alive) return;
-        setItems(Array.isArray(json?.items) ? json.items : []);
+        setItems(Array.isArray(j?.items) ? j.items : []);
       } catch {
         if (!alive) return;
         setItems([]);
@@ -25,37 +24,29 @@ export default function FotoPage() {
         setLoading(false);
       }
     })();
-
     return () => {
       alive = false;
     };
   }, []);
 
   return (
-    <div className="max-w-6xl">
-      <h1 className="text-3xl font-extrabold text-white">Foto</h1>
-
+    <main style={{ padding: 24 }}>
+      <h1>Foto</h1>
       {loading ? (
-        <div className="mt-6 text-white/70">Caricamento…</div>
+        <p>Caricamento…</p>
       ) : items.length === 0 ? (
-        <div className="mt-6 text-white/70">Nessuna foto disponibile.</div>
+        <p>Nessuna foto disponibile.</p>
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {items.map((f) => (
-            <a
-              key={f.name}
-              href={f.url}
-              target="_blank"
-              rel="noreferrer"
-              className="overflow-hidden rounded-2xl border border-white/10 bg-black/40"
-            >
+        <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+          {items.map((x) => (
+            <a key={x.name} href={x.url} target="_blank" rel="noreferrer" style={{ border: "1px solid #ddd", borderRadius: 12, overflow: "hidden" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={f.url} alt={f.name} className="h-64 w-full object-cover" />
-              <div className="p-3 text-sm text-white/80">{f.name}</div>
+              <img src={x.url} alt={x.name} style={{ width: "100%", height: 300, objectFit: "cover" }} />
+              <div style={{ padding: 10, fontSize: 13 }}>{x.name}</div>
             </a>
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }

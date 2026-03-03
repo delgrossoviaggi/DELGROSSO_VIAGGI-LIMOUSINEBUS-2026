@@ -1,39 +1,49 @@
-export const metadata = { title: "Prenotazioni — Del Grosso Viaggi & Limousine Bus" };
+"use client";
+
+import { useState } from "react";
 
 export default function PrenotazioniPage() {
+  const [nome, setNome] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [messaggio, setMessaggio] = useState("");
+  const [ok, setOk] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function submit() {
+    setOk(null);
+    setLoading(true);
+    try {
+      const r = await fetch("/api/prenotazioni", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ nome, telefono, messaggio }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j?.error || "Errore invio");
+      setOk("Richiesta inviata ✅");
+      setNome("");
+      setTelefono("");
+      setMessaggio("");
+    } catch (e: any) {
+      setOk(e?.message || "Errore");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div>
-      <h1 className="text-3xl font-extrabold">Prenotazioni</h1>
-      <p className="mt-3 text-neutral-300">Prenota il tuo posto direttamente da qui.</p>
+    <main style={{ padding: 24, maxWidth: 520 }}>
+      <h1>Richiedi Preventivo</h1>
 
-      <div className="mt-6 card p-6">
-        <div className="text-neutral-100 font-semibold">👉 Prenota via WhatsApp (più veloce)</div>
-        <p className="mt-2 text-neutral-300">Scegli il servizio e inviaci i dettagli: rispondiamo il prima possibile.</p>
-
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <a
-            className="btn btn-primary"
-            href="https://wa.me/393662127916?text=Ciao%21+Richiedi+preventivo+Limobus.%0AData+evento%3A+%0ANumero+persone%3A+%0APartenza+%28citt%C3%A0%29%3A+%0ADestinazione%3A+%0AOrario+indicativo%3A+%0ANote%3A+"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ✅ Limobus (Nicola)
-          </a>
-
-          <a
-            className="btn btn-primary"
-            href="https://wa.me/393205730466?text=Ciao%21+Richiedi+preventivo+Bus+GT.%0AData%3A+%0ANumero+persone%3A+%0ATratta+%28andata%2Fritorno%29%3A+%0AOrari%3A+%0ANote%3A+"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ✅ Bus GT (Raffaele)
-          </a>
-        </div>
-
-        <div className="mt-6 text-sm text-neutral-400">
-          Se preferisci, puoi chiamarci: 3205730466 (Raffaele) — 3662127916 (Nicola).
-        </div>
+      <div style={{ display: "grid", gap: 10 }}>
+        <input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+        <input placeholder="Telefono" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+        <textarea placeholder="Messaggio" value={messaggio} onChange={(e) => setMessaggio(e.target.value)} rows={5} />
+        <button onClick={submit} disabled={loading || !nome || !telefono}>
+          {loading ? "Invio…" : "Invia"}
+        </button>
+        {ok && <p>{ok}</p>}
       </div>
-    </div>
+    </main>
   );
 }

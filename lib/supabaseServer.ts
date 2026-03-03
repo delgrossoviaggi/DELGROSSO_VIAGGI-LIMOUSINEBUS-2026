@@ -5,7 +5,7 @@ export function getServerSupabase() {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceKey) {
-    throw new Error("Supabase environment variables mancanti.");
+    throw new Error("Missing env: NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY");
   }
 
   return createClient(url, serviceKey, {

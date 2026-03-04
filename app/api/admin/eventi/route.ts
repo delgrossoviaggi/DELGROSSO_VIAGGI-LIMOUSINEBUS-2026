@@ -9,10 +9,9 @@ export async function GET(req: NextRequest) {
     assertAdmin(req);
     const supabase = getServerSupabase();
     const { data, error } = await supabase.storage.from(BUCKET).list();
-
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(data);
   } catch (err: any) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

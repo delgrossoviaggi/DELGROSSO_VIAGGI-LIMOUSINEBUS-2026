@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { assertAdmin } from "../../_utils/admin";
+import { assertAdmin } from "../../_utils/admin"; // IMPORT SINGOLO
 import { getServerSupabase } from "@/lib/supabaseServer";
 
 export async function GET(req: NextRequest) {
@@ -7,10 +7,9 @@ export async function GET(req: NextRequest) {
     assertAdmin(req);
     const supabase = getServerSupabase();
     const { data, error } = await supabase.from("prenotazioni").select("*");
-
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(data);
   } catch (err: any) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

@@ -1,21 +1,26 @@
-import { NextResponse } from "next/server";
-import { getServerSupabase } from "../../../lib/supabaseServer";
+import { NextRequest, NextResponse } from "next/server";
+import { assertAdmin } from "../../_utils/admin";
+import { getServerSupabase } from "../../../../lib/supabaseServer";
 
 export const dynamic = "force-dynamic";
 
 const BUCKET = process.env.SUPABASE_EVENTI_BUCKET || "eventi";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const auth = assertAdmin(req);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: 401 });
+  }
+
   const supabase = getServerSupabase();
 
-  const { data, error } = await supabase.storage.from(BUCKET).list("", { limit: 200 });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const { data, error } = await supabase.storage
+    .from(BUCKET)
+    .list("", { limit: 200 });
 
-  const items =
-    (data ?? []).map((f) => {
-      const pub = supabase.storage.from(BUCKET).getPublicUrl(f.name).data.publicUrl;
-      return { name: f.name, url: pub };
-    }) ?? [];
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
-  return NextResponse.json({ items });
+  return NextResponse.json({ items: data ?? [] });
 }
